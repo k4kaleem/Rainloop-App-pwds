@@ -177,3 +177,48 @@ private function removeAppPasswordFromExim($sEmail, $iAppPasswordId)
         return md5($sSalt . $sPassword) . ':' . $sSalt;
     }
 }
+/**
+ * Get form to delete an app password.
+ *
+ * @param  integer $iAppPasswordId
+ * @return string
+ */
+private function getAppPasswordsDeleteForm($iAppPasswordId)
+{
+    $sHtml = '';
+
+    // Add form to delete app password.
+    $sHtml .= '<form id="app-password-delete-form" method="POST" action="#">';
+    $sHtml .= '<input type="hidden" name="action" value="app-password-delete">';
+    $sHtml .= '<input type="hidden" name="app-password-id" value="' . $iAppPasswordId . '">';
+    $sHtml .= '<div class="field-group">';
+    $sHtml .= '<input type="submit" value="Delete" class="button danger">';
+    $sHtml .= '</div>';
+    $sHtml .= '</form>';
+
+    return $sHtml;
+}
+/**
+ * Delete an app password.
+ *
+ * @param  integer $iAppPasswordId
+ * @return void
+ */
+public function AppPasswords_Delete($iAppPasswordId)
+{
+    // Get user email.
+    $sEmail = $this->sUserEmail;
+
+    // Remove app password from Exim.
+    $this->removeAppPasswordFromExim($sEmail, $iAppPasswordId);
+
+    // Remove app password from Rainloop.
+    $aAppPasswords = $this->getAppPasswords();
+    unset($aAppPasswords[$iAppPasswordId]);
+    $this->setAppPasswords($aAppPasswords);
+
+    // Redirect to success page.
+    header('Location: ?_task=settings&_action=plugin-app-passwords&_sucess=delete');
+    exit;
+}
+?>
