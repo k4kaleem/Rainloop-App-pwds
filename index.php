@@ -74,7 +74,8 @@ class AppPasswordsPlugin extends \RainLoop\Plugins\AbstractPlugin
         $aResult['Message'] = $sMessage;
         return $aResult;
     }
-public function AppPasswords_Delete()
+/*
+    public function AppPasswords_Delete()
     {
         $aResult = array(
             'Error' => false,
@@ -97,7 +98,7 @@ public function AppPasswords_Delete()
         $aResult['Message'] = $sMessage;
         return $aResult;
     }
-
+*/
     private function getEmailAddress()
     {
         // Get the current user's email address
@@ -176,8 +177,7 @@ private function removeAppPasswordFromExim($sEmail, $iAppPasswordId)
 
         return md5($sSalt . $sPassword) . ':' . $sSalt;
     }
-}
-/**
+    /**
  * Get form to delete an app password.
  *
  * @param  integer $iAppPasswordId
@@ -213,8 +213,7 @@ private function removeAppPasswordFromExim($sEmail, $iAppPasswordId)
         
         $this->sTemplateFile = 'AppPasswords_Delete';
     }
-
-/**
+    /**
  * Delete an app password.
  *
  * @param  integer $iAppPasswordId
@@ -237,4 +236,8 @@ public function AppPasswords_Delete($iAppPasswordId)
     header('Location: ?_task=settings&_action=plugin-app-passwords&_sucess=delete');
     exit;
 }
+}
+
+
+
 ?>
