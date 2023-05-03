@@ -183,21 +183,37 @@ private function removeAppPasswordFromExim($sEmail, $iAppPasswordId)
  * @param  integer $iAppPasswordId
  * @return string
  */
-private function getAppPasswordsDeleteForm($iAppPasswordId)
-{
-    $sHtml = '';
+    public function getAppPasswordsDeleteForm($iAppPasswordId)
+    {
+        $sEmail = $this->sUserEmail;
+        $sHash = $this->sUserHash;
+        
+        // Get App Password by ID
+        $oAppPassword = AppPasswords_Model::newInstance()->getById($sEmail, $iAppPasswordId);
 
-    // Add form to delete app password.
-    $sHtml .= '<form id="app-password-delete-form" method="POST" action="#">';
-    $sHtml .= '<input type="hidden" name="action" value="app-password-delete">';
-    $sHtml .= '<input type="hidden" name="app-password-id" value="' . $iAppPasswordId . '">';
-    $sHtml .= '<div class="field-group">';
-    $sHtml .= '<input type="submit" value="Delete" class="button danger">';
-    $sHtml .= '</div>';
-    $sHtml .= '</form>';
+        // If App Password doesn't exist
+        if (!$oAppPassword) {
+            $this->sTemplateFile = 'AppPasswords_NotFound';
+            return;
+        }
+        
+        $sTitle = $oAppPassword->getTitle();
+        $sCode = $oAppPassword->getCode();
 
-    return $sHtml;
-}
+        // If form is submitted
+        if (isset($_POST['delete'])) {
+            $this->removeAppPassword($sEmail, $iAppPasswordId);
+            $this->sTemplateFile = 'AppPasswords_Delete_Success';
+            return;
+        }
+        
+        $this->aData['title'] = $sTitle;
+        $this->aData['code'] = $sCode;
+        $this->aData['id'] = $iAppPasswordId;
+        
+        $this->sTemplateFile = 'AppPasswords_Delete';
+    }
+
 /**
  * Delete an app password.
  *
